@@ -52,7 +52,8 @@ def run_eval(model: str) -> None:
     for entry in samples:
         sample = Sample(**entry)
         generated_answer = model_predictor.generate_answer(sample=sample)
-
+        print(generated_answer)
+        print('\n')
         if sample.json_expected:
             try:
                 json_answer = json.loads(generated_answer)
