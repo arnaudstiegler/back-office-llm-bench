@@ -70,17 +70,8 @@ def run_eval(model: str) -> None:
                         correct.append(0)
                     valid_json.append(0)
                 else:
+                    correct.append(0)
                     valid_json.append(0)
-        else:
-            # TODO: tbd whether we want to do this
-            if generated_answer == sample.expected_output:
-                valid_plain.append(1)
-                correct.append(1)
-            elif sample.expected_output in generated_answer:
-                correct.append(1)
-                valid_plain.append(0)
-            else:
-                valid_plain.append(0)
 
         """
         Use jsonformer to force json output
