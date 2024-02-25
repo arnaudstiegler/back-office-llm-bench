@@ -2,7 +2,7 @@
   "samples": [
     {
       "id": 1,
-      "type": "top-k",
+      "type": "Basic reasoning",
       "task_definition": "Find the highest expense for the month",
       "task_input": "List of expenses: Rent: $1200, Utilities: $300, Office Supplies: $150, Internet: $80, Maintenance: $200",
       "json_expected": false,
@@ -10,8 +10,8 @@
       "expected_output": "$1200"
     },
     {
-      "id": 1,
-      "type": "top-k",
+      "id": 2,
+      "type": "Basic reasoning",
       "task_definition": "Find the highest expense for the month",
       "task_input": "List of expenses: Rent: $1200, Utilities: $300, Office Supplies: $150, Internet: $80, Maintenance: $200",
       "json_expected": false,
@@ -19,13 +19,70 @@
       "expected_output": "$1200"
     },
     {
-      "id": 1,
+      "id": 3,
       "type": "reformat",
       "task_definition": "Reformat the date into MM/DD/YYYY",
       "task_input": "April 1st 1994",
       "json_expected": false,
       "task_output_format": "The output should be a single string representing the date in the format MM/DD/YYYY",
       "expected_output": "04/01/1994"
+    },
+    {
+      "id": 4,
+      "type": "reformat",
+      "task_definition": "Reformat the amount into $XXXX.XX",
+      "task_input": "One thousand two hundred and thirty six dollars",
+      "json_expected": false,
+      "task_output_format": "The output should be a single string representing the amount in the format $XXXX.XX",
+      "expected_output": "$1236.00"
+    },
+    {
+      "id": 5,
+      "type": "reformat",
+      "task_definition": "Reformat the amount into $XXXX.XX",
+      "task_input": "One thousand two hundred and thirty six dollars",
+      "json_expected": true,
+      "task_output_format": "The output should be a JSON object with a key 'amount' and value the amount in the format $XXXX.XX",
+      "expected_output": {
+        "amount": "$1236.00"
+      }
+    },
+    {
+      "id": 6,
+      "type": "Information extraction",
+      "task_definition": "Extract the names and position from the sample",
+      "task_input": "In the recent quarterly board meeting, Emily Johnson, Director of Sustainability Initiatives, presented a comprehensive report on the corporation's efforts towards environmental sustainability. She outlined the progress made in reducing the company's carbon footprint through the adoption of renewable energy sources and the implementation of waste reduction programs. Emily's report highlighted significant achievements in the past quarter, including a 15% decrease in overall energy consumption and a 20% reduction in waste generation. She proposed a strategic plan for further improvements, emphasizing the integration of green technologies and employee engagement in sustainability efforts. The board acknowledged Emily's contributions and approved the proposed initiatives, committing to the corporation's long-term goal of achieving net-zero emissions.\n",
+      "json_expected": true,
+      "task_output_format": "The output should be a JSON object with a keys 'name' and 'position' and the corresponding values",
+      "expected_output": [
+        {
+          "name": "Emily Johnson",
+          "position": "Director of Sustainability Initiatives"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "Information Extraction",
+      "task_definition": "Extract revenue, net profit margin, operating expenses, operating profits and customer base growth",
+      "task_input": "The extracted data shows that the company's revenue for the fourth quarter was $20 million, with a net profit margin of 15%. Operating expenses were reported as $5 million, leading to an operating profit of $3 million. The company also reported a 10% increase in customer base compared to the previous quarter.",
+      "json_expected": true,
+      "task_output_format": "The output should be a JSON object containing keys 'revenue', 'net_profit_margin', 'operating_expenses', 'operating_profit', and 'customer_base_growth' with their corresponding verified values (use floats for percentages)",
+      "expected_output": {
+        "revenue": 20000000,
+        "net_profit_margin": 0.15,
+        "operating_expenses": 5000000,
+        "operating_profit": 3000000,
+        "customer_base_growth": 0.1
+      }
+    },
+    {
+      "type": "Basic reasoning",
+      "task_definition": "Find the highest expense for the month",
+      "task_input": "List of expenses: Groceries: $600, Transportation: $150, Health Insurance: $250, Eating Out: $300, Gym Membership: $50",
+      "json_expected": true,
+      "task_output_format": "The output should be a JSON object with the category and amount",
+      "expected_output": "{\"category\": \"Groceries\", \"amount\": \"$600\"}"
     }
   ]
 }

@@ -48,6 +48,7 @@ def run_eval(model: str) -> None:
 
     valid_json = []
     valid_plain = []
+    correct = []
     for entry in samples:
         sample = Sample(**entry)
         generated_answer = model_predictor.generate_answer(sample=sample)
@@ -56,10 +57,16 @@ def run_eval(model: str) -> None:
             try:
                 json_answer = json.loads(generated_answer)
                 valid_json.append(1)
+                if json_answer == generated_answer:
+                    correct.append(1)
             except:
                 out = find_and_parse_json(generated_answer)
                 if out:
                     # TODO: invalid format a priori, but could be recovered?
+                    if out == sample.expected_output:
+                        correct.append(1)
+                    else:
+                        correct.append(0)
                     valid_json.append(0)
                 else:
                     valid_json.append(0)
@@ -67,7 +74,9 @@ def run_eval(model: str) -> None:
             # TODO: tbd whether we want to do this
             if generated_answer == sample.expected_output:
                 valid_plain.append(1)
+                correct.append(1)
             elif sample.expected_output in generated_answer:
+                correct.append(1)
                 valid_plain.append(0)
             else:
                 valid_plain.append(0)
@@ -81,6 +90,8 @@ def run_eval(model: str) -> None:
         """
 
     print(sum(valid_json) / len(valid_json))
+    print(sum(valid_plain) / len(valid_plain))
+    print(sum(correct) / len(correct))
 
 
 if __name__ == "__main__":
