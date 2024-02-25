@@ -47,7 +47,6 @@ def run_eval(model: str) -> None:
     model_predictor = model_predictor_cls()
 
     valid_json = []
-    valid_plain = []
     correct = []
     for entry in samples:
         sample = Sample(**entry)
@@ -83,7 +82,6 @@ def run_eval(model: str) -> None:
     print(valid_json)
     print(correct)
     print(sum(valid_json) / len(valid_json))
-    print(sum(valid_plain) / len(valid_plain))
     print(sum(correct) / len(correct))
 
 
