@@ -53,24 +53,27 @@ def run_eval(model: str) -> None:
         generated_answer = model_predictor.generate_answer(sample=sample)
         print(generated_answer)
         print('\n')
-        if sample.json_expected:
-            try:
-                json_answer = json.loads(generated_answer)
-                valid_json.append(1)
-                if json_answer == sample.expected_output:
+
+        try:
+            json_answer = json.loads(generated_answer)
+            valid_json.append(1)
+            if json_answer == sample.expected_output:
+                correct.append(1)
+            else:
+                correct.append(0)
+        except:
+            out = find_and_parse_json(generated_answer)
+            if out:
+                # TODO: invalid format a priori, but could be recovered?
+                if out == sample.expected_output:
                     correct.append(1)
-            except:
-                out = find_and_parse_json(generated_answer)
-                if out:
-                    # TODO: invalid format a priori, but could be recovered?
-                    if out == sample.expected_output:
-                        correct.append(1)
-                    else:
-                        correct.append(0)
-                    valid_json.append(0)
                 else:
                     correct.append(0)
-                    valid_json.append(0)
+                valid_json.append(0)
+            else:
+                correct.append(0)
+                valid_json.append(0)
+                print(f'Could not parse json from: {generated_answer}')
 
         """
         Use jsonformer to force json output
