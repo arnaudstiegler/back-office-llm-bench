@@ -83,7 +83,10 @@
       "task_input": "List of expenses: Groceries: $600, Transportation: $150, Health Insurance: $250, Eating Out: $300, Gym Membership: $50",
       "json_expected": true,
       "task_output_format": "The output should be a JSON object with the category and amount",
-      "expected_output": "{\"category\": \"Groceries\", \"amount\": \"$600\"}"
+      "expected_output": {
+        "category": "Groceries",
+        "amount": "$600"
+      }
     }
   ]
 }

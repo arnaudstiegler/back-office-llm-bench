@@ -57,7 +57,7 @@ def run_eval(model: str) -> None:
             try:
                 json_answer = json.loads(generated_answer)
                 valid_json.append(1)
-                if json_answer == generated_answer:
+                if json_answer == sample.expected_output:
                     correct.append(1)
             except:
                 out = find_and_parse_json(generated_answer)
