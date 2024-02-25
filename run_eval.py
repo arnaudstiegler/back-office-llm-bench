@@ -88,7 +88,8 @@ def run_eval(model: str) -> None:
         Verify the keys
         if not json_expected: try to match only the output, else try to find the answer in the output
         """
-
+    print(valid_json)
+    print(correct)
     print(sum(valid_json) / len(valid_json))
     print(sum(valid_plain) / len(valid_plain))
     print(sum(correct) / len(correct))
