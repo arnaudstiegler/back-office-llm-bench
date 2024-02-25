@@ -34,3 +34,23 @@ Comments within the json:
 "customer_base_growth": 0.1 // 10% as a decimal
 }
 '''
+
+Spurious keys in the formating:
+
+'''
+{
+  "highest_expense": {
+    "category": "Groceries",
+    "amount": 600
+  }
+}
+'''
+
+instead of:
+
+'''
+{
+    "category": "Groceries",
+    "amount": 600
+  }
+'''

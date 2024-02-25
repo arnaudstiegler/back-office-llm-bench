@@ -6,8 +6,10 @@
       "task_definition": "Find the highest expense for the month",
       "task_input": "List of expenses: Rent: $1200, Utilities: $300, Office Supplies: $150, Internet: $80, Maintenance: $200",
       "json_expected": true,
-      "task_output_format": "Return a JSON object with a key called 'highest_expense' and the corresponding value",
-      "expected_output": "$1200"
+      "task_output_format": "Return a JSON object with a key called 'highest_expense' and the corresponding amount",
+      "expected_output": {
+        "highest_expense": "$1200"
+      }
     },
     {
       "id": 3,
@@ -23,12 +25,12 @@
     {
       "id": 5,
       "type": "reformat",
-      "task_definition": "Reformat the amount into $XXXX.XX",
+      "task_definition": "Reformat the amount into $X,XXX.XX",
       "task_input": "One thousand two hundred and thirty six dollars",
       "json_expected": true,
       "task_output_format": "The output should be a JSON object with a key 'amount' and value the amount in the format $XXXX.XX",
       "expected_output": {
-        "amount": "$1236.00"
+        "amount": "$1,236.00"
       }
     },
     {
@@ -37,7 +39,7 @@
       "task_definition": "Extract the names and position from the sample",
       "task_input": "In the recent quarterly board meeting, Emily Johnson, Director of Sustainability Initiatives, presented a comprehensive report on the corporation's efforts towards environmental sustainability. She outlined the progress made in reducing the company's carbon footprint through the adoption of renewable energy sources and the implementation of waste reduction programs. Emily's report highlighted significant achievements in the past quarter, including a 15% decrease in overall energy consumption and a 20% reduction in waste generation. She proposed a strategic plan for further improvements, emphasizing the integration of green technologies and employee engagement in sustainability efforts. The board acknowledged Emily's contributions and approved the proposed initiatives, committing to the corporation's long-term goal of achieving net-zero emissions.\n",
       "json_expected": true,
-      "task_output_format": "The output should be a JSON object with a keys 'name' and 'position' and the corresponding values",
+      "task_output_format": "The output should be a JSON object containing a list of dictionnaries, each having keys 'name' and 'position' and the corresponding values",
       "expected_output": [
         {
           "name": "Emily Johnson",
