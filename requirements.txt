@@ -1,0 +1,9 @@
+numpy
+torch==2.1.0
+transformers
+ipdb
+ruff
+datasets
+packaging
+sentencepiece
+click
