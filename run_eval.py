@@ -40,32 +40,26 @@ def find_and_parse_json(s):
 
 @click.command()
 @click.option(
-    "--model", type=click.Choice(list(MODEL_CHOICES.keys())), default="mistral-instruct"
+    "--model", type=click.Choice(list(MODEL_CHOICES.keys())), default="mistral-instruct",
 )
-def run_eval(model: str, json_mode = True) -> None:
-    from transformers import AutoTokenizer, AutoModelForCausalLM
-
-    tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-    model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
+@click.option("--json_mode", is_flag=True)
+def run_eval(model: str, json_mode: bool) -> None:
+    model_predictor_cls = MODEL_CHOICES[model]
+    model_predictor = model_predictor_cls()
 
     if json_mode:
         from jsonformer import Jsonformer
         json_schema = {
             "type": "object",
             "properties": {
-                "name": {"type": "string"},
-                "age": {"type": "number"},
-                "is_student": {"type": "boolean"},
-                "courses": {
-                    "type": "array",
-                    "items": {"type": "string"}
-                }
+                "answer": {"type": "string"},
             }
         }
 
         prompt = "Generate a person's information based on the following schema:"
         import ipdb; ipdb.set_trace()
-        jsonformer = Jsonformer(model, tokenizer, json_schema, prompt)
+        # Jsonformer should take care of the input
+        jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
         generated_data = jsonformer()
 
         print(generated_data)
