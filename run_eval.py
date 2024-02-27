@@ -48,30 +48,29 @@ def run_eval(model: str, json_mode: bool) -> None:
     # model_predictor_cls = MODEL_CHOICES[model]
     model_predictor = MistralInstructPredictor()
     dataset = FinanceTasksDataset()
-    sample = dataset[0]
+    for sample in dataset[1:20]:
+        prompt = model_predictor.format_sample_into_prompt(sample)
 
-    prompt = model_predictor.format_sample_into_prompt(sample)
-
-    # if json_mode:
-    from jsonformer import Jsonformer
-    json_schema = {
-        "type": "object",
-        "properties": {
-            "answer": {"type": "string"},
+        # if json_mode:
+        from jsonformer import Jsonformer
+        json_schema = {
+            "type": "object",
+            "properties": {
+                "answer": {"type": "string"},
+            }
         }
-    }
-    print(sample)
-    # Jsonformer should take care of the input
-    jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
-    generated_data = jsonformer()
+        print(sample)
+        # Jsonformer should take care of the input
+        jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
+        generated_data = jsonformer()
 
-    print('with json_mode', generated_data)
+        print('with json_mode', generated_data)
 
-    answer = model_predictor.generate_answer(sample)
+        answer = model_predictor.generate_answer(sample)
 
-    print('no json mode', answer)
+        print('no json mode', answer)
 
-    print('\n')
+        print('\n')
 
 
 
