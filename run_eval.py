@@ -48,7 +48,8 @@ def run_eval(model: str, json_mode: bool) -> None:
     # model_predictor_cls = MODEL_CHOICES[model]
     model_predictor = MistralInstructPredictor()
     dataset = FinanceTasksDataset()
-    for sample in dataset[1:20]:
+    for i in range(1,10):
+        sample = dataset[i]
         prompt = model_predictor.format_sample_into_prompt(sample)
 
         # if json_mode:
