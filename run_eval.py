@@ -60,7 +60,7 @@ def run_eval(model: str, json_mode: bool) -> None:
             "answer": {"type": "string"},
         }
     }
-
+    print(sample)
     # Jsonformer should take care of the input
     jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
     generated_data = jsonformer()
@@ -70,6 +70,8 @@ def run_eval(model: str, json_mode: bool) -> None:
     answer = model_predictor.generate_answer(sample)
 
     print('no json mode', answer)
+
+    print('\n')
 
 
 
