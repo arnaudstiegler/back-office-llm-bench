@@ -6,7 +6,7 @@
       "task_definition": "Find the highest expense for the month",
       "task_input": "List of expenses: Rent: $1200, Utilities: $300, Office Supplies: $150, Internet: $80, Maintenance: $200",
       "json_expected": true,
-      "task_output_format": "Return a JSON object with a key called 'highest_expense' and the corresponding amount",
+      "task_output_format": "Return a JSON object with a single key called 'highest_expense' and the corresponding amount",
       "expected_output": {
         "highest_expense": "$1200"
       }
