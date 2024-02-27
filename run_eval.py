@@ -9,6 +9,7 @@ from predictors import (
     MistralInstructPredictor,
     Sample,
 )
+from dataset import FinanceTasksDataset
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 samples = json.load(open(os.path.join(dir_path, "tasks_manual.json")))["samples"]
@@ -44,25 +45,33 @@ def find_and_parse_json(s):
 )
 @click.option("--json_mode", is_flag=True)
 def run_eval(model: str, json_mode: bool) -> None:
-    model_predictor_cls = MODEL_CHOICES[model]
-    model_predictor = model_predictor_cls()
+    # model_predictor_cls = MODEL_CHOICES[model]
+    model_predictor = MistralInstructPredictor()
+    dataset = FinanceTasksDataset()
+    sample = dataset[0]
 
-    if json_mode:
-        from jsonformer import Jsonformer
-        json_schema = {
-            "type": "object",
-            "properties": {
-                "answer": {"type": "string"},
-            }
+    prompt = model_predictor.format_sample_into_prompt(sample)
+
+    # if json_mode:
+    from jsonformer import Jsonformer
+    json_schema = {
+        "type": "object",
+        "properties": {
+            "answer": {"type": "string"},
         }
+    }
 
-        prompt = "Generate a person's information based on the following schema:"
-        import ipdb; ipdb.set_trace()
-        # Jsonformer should take care of the input
-        jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
-        generated_data = jsonformer()
+    # Jsonformer should take care of the input
+    jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
+    generated_data = jsonformer()
 
-        print(generated_data)
+    print('with json_mode', generated_data)
+
+    answer = model_predictor.generate_answer(sample)
+
+    print('no json mode', answer)
+
+
 
     # valid_json = []
     # correct = []

@@ -1,7 +1,7 @@
-from dataclasses import dataclass
-
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+
+from dataset import Sample
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # None means we use regular attention
@@ -15,26 +15,24 @@ SYS_PROMPT = (
 )
 
 
-@dataclass
-class Sample:
-    id: int
-    type: str
-    task_definition: str
-    task_input: str
-    json_expected: bool
-    task_output_format: str
-    expected_output: str
+# @dataclass
+# class Sample:
+#     id: int
+#     type: str
+#     task_definition: str
+#     task_input: str
+#     json_expected: bool
+#     task_output_format: str
+#     expected_output: str
 
 
 class Predictor:
     @staticmethod
     def format_sample_into_prompt(sample: Sample) -> str:
         return (
-            sample.task_definition
-            + " "
-            + sample.task_output_format
-            + "\n Input: \n"
-            + sample.task_input
+                "Answer the question and return the answer in a json with a key 'answer' and the corresponding value as answer "
+                + '\n'
+                + sample.input
         )
 
     def generate_answer(self, sample: Sample) -> str:
