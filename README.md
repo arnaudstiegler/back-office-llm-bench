@@ -3,9 +3,10 @@ Benchmarking LLMs on plain back-office tasks
 
 ## TODOS:
 - For the FinQA dataset, find the original dataset and/or iterate on the prompt to focus on the last question only
-- Add support for OpenMath
-- Find more dataset
-- 
+- <s>Add support for OpenMath</s>
+- <s>Simpler eval pipeline</s>
+- <s>Retrieve same output as HuggingFaceChat</s>
+- Find the highest batch size we can handle on a g5
 
 ## Goals
 

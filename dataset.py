@@ -37,7 +37,7 @@ class OpenMathDataset:
     def __init__(self):
         self.dataset = load_dataset("nvidia/OpenMathInstruct-1")['validation']
         self.task_definition = '''
-            Answer the question and return the answer in a json that contains one key called "answer"
+            Return the answer in a json object that contains one key called "answer"
             and the value must be the unique string that is the answer to that question.
         '''
 
@@ -48,7 +48,7 @@ class OpenMathDataset:
             task_input=sample['question'],
             task_definition=self.task_definition,
             answer=sample['expected_answer'],
-            prompt=self.task_definition + '  \n  ' + sample['question']
+            prompt=sample['question'] + '  \n  ' + self.task_definition
         )
 
 
