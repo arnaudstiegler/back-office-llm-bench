@@ -10,6 +10,7 @@ class Sample:
     task_definition: str
     task_input: str
     answer: str
+    prompt: str
 
 
 class FinanceTasksDataset:
@@ -27,7 +28,8 @@ class FinanceTasksDataset:
             id=item,
             task_input=sample['input'],
             task_definition=self.task_definition,
-            answer=sample['label']
+            answer=sample['label'],
+            prompt= self.task_definition + '  \n  ' + sample['input']
         )
 
 
@@ -45,7 +47,8 @@ class OpenMathDataset:
             id=item,
             task_input=sample['question'],
             task_definition=self.task_definition,
-            answer=sample['expected_answer']
+            answer=sample['expected_answer'],
+            prompt=self.task_definition + '  \n  ' + sample['question']
         )
 
 

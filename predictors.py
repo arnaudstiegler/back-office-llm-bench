@@ -30,7 +30,7 @@ class Predictor:
     @staticmethod
     def format_sample_into_prompt(sample: Sample) -> str:
         return (
-                sample.input
+                SYS_PROMPT + ' ' + sample.task_input
         )
 
     def generate_answer(self, sample: Sample) -> str:
