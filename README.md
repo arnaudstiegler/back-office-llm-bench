@@ -1,6 +1,12 @@
 # back-office-llm-bench
 Benchmarking LLMs on plain back-office tasks
 
+## TODOS:
+- For the FinQA dataset, find the original dataset and/or iterate on the prompt to focus on the last question only
+- Add support for OpenMath
+- Find more dataset
+- 
+
 ## Goals
 
 - When it comes to executing a task + formatting the answer in a machine-digestible way, how do model perform?

@@ -9,7 +9,7 @@ from predictors import (
     MistralInstructPredictor,
     Sample,
 )
-from dataset import FinanceTasksDataset
+from dataset import FinanceTasksDataset, OpenMathDataset
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 samples = json.load(open(os.path.join(dir_path, "tasks_manual.json")))["samples"]
@@ -47,7 +47,7 @@ def find_and_parse_json(s):
 def run_eval(model: str, json_mode: bool) -> None:
     # model_predictor_cls = MODEL_CHOICES[model]
     model_predictor = MistralInstructPredictor()
-    dataset = FinanceTasksDataset()
+    dataset = OpenMathDataset()
     for i in range(1,10):
         sample = dataset[i]
         prompt = model_predictor.format_sample_into_prompt(sample)
@@ -57,7 +57,7 @@ def run_eval(model: str, json_mode: bool) -> None:
         json_schema = {
             "type": "object",
             "properties": {
-                "answer": {"type": "string"},
+                "answer": {"type": "number"},
             }
         }
         print(sample)

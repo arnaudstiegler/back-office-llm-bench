@@ -30,9 +30,7 @@ class Predictor:
     @staticmethod
     def format_sample_into_prompt(sample: Sample) -> str:
         return (
-                "Answer the last question (if there are multiple) and return the answer in a json with a key 'answer' and the corresponding value as answer "
-                + '\n'
-                + sample.input
+                sample.input
         )
 
     def generate_answer(self, sample: Sample) -> str:
