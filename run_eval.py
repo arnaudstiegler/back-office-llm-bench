@@ -55,11 +55,16 @@ def run_eval(model: str, json_mode: bool) -> None:
         # generated_data = jsonformer()
         #
         # print('with json_mode', generated_data)
+        instructions = '''
+        First reason and find the solution to the question. Then format the answer of the question 
+        as a json dictionnary with a key "answer" and the value the corresponding numerical answer 
+        to the question. Make sure there is one and only one json dict in your answer and that nothing
+        else is formatted similarly (i will parse that answer for a json)
+        '''
+        answer = pipe(sample.task_input + instructions)
 
-        answer = pipe(sample.task_input + 'First reason and find the solution to the question. Then format the answer of the question as a json dictionnary with a key "answer" and the value the corresponding numerical answer to the question. Make sure there is one and only one json dict in your answer')
-
-        print('no json mode', answer)
-        print('recovered', find_and_parse_json(answer))
+        print('no json mode', answer[0]['generated_text'])
+        print('recovered', find_and_parse_json(answer[0]['generated_text']))
 
         print('\n')
 
