@@ -8,6 +8,7 @@ from predictors import (
     MistralInstructPredictor,
 )
 from dataset import OpenMathDataset
+from utils import find_and_parse_json
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 samples = json.load(open(os.path.join(dir_path, "tasks_manual.json")))["samples"]
@@ -49,6 +50,7 @@ def run_eval(model: str, json_mode: bool) -> None:
         answer = model_predictor.generate_answer(sample)
 
         print('no json mode', answer)
+        print('recovered', find_and_parse_json(answer))
 
         print('\n')
 
