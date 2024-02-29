@@ -39,7 +39,7 @@ def run_eval(model: str, json_mode: bool) -> None:
     dataset = OpenMathDataset()
 
     answer_correct = []
-    for i in range(1,10):
+    for i in range(1,100):
         sample = dataset[i]
         # prompt = model_predictor.format_sample_into_prompt(sample)
 
@@ -63,14 +63,16 @@ def run_eval(model: str, json_mode: bool) -> None:
         to the question. Make sure there is one and only one json dict in your answer and that nothing
         else is formatted similarly (i will parse that answer for a json)
         '''
-        answer = pipe(sample.task_input + instructions)
+        # TODO: should I add '[INST]' + prompt + '[/INST]'?
+        # -> The answer to that is YES!
+        answer = pipe('[INST]' + sample.task_input + instructions + '[/INST]')
 
         print('recovered', find_and_parse_json(answer[0]['generated_text']))
         print('answer', sample.answer)
 
         if (find_and_parse_json(answer[0]['generated_text']) and
             find_and_parse_json(answer[0]['generated_text']).get('answer')
-                and find_and_parse_json(answer[0]['generated_text'])['answer'] == sample.answer):
+                and str(find_and_parse_json(answer[0]['generated_text'])['answer']) == sample.answer):
             answer_correct.append(1)
         else:
             answer_correct.append(0)
