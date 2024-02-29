@@ -39,7 +39,7 @@ def run_eval(model: str, json_mode: bool) -> None:
     dataset = OpenMathDataset()
     for i in range(1,10):
         sample = dataset[i]
-        prompt = model_predictor.format_sample_into_prompt(sample)
+        # prompt = model_predictor.format_sample_into_prompt(sample)
 
         # if json_mode:
         from jsonformer import Jsonformer
@@ -56,7 +56,7 @@ def run_eval(model: str, json_mode: bool) -> None:
         #
         # print('with json_mode', generated_data)
 
-        answer = pipe(sample)
+        answer = pipe(sample.task_input + 'First reason and find the solution to the question. Then format the answer of the question as a json dictionnary with a key "answer" and the value the corresponding numerical answer to the question. Make sure there is one and only one json dict in your answer')
 
         print('no json mode', answer)
         print('recovered', find_and_parse_json(answer))
