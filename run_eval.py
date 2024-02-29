@@ -49,7 +49,7 @@ def run_eval(model: str, json_mode: bool) -> None:
                 "answer": {"type": "number"},
             }
         }
-        print(sample)
+        # print(sample)
         # Jsonformer should take care of the input
         # jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
         # generated_data = jsonformer()
@@ -63,8 +63,8 @@ def run_eval(model: str, json_mode: bool) -> None:
         '''
         answer = pipe(sample.task_input + instructions)
 
-        print('no json mode', answer[0]['generated_text'])
         print('recovered', find_and_parse_json(answer[0]['generated_text']))
+        print('answer', sample.answer)
 
         print('\n')
 
