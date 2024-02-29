@@ -2,6 +2,7 @@ import json
 import os
 
 import click
+from transformers import pipeline
 
 from predictors import (
     MistralOpenOrcaPredictor,
@@ -27,6 +28,14 @@ MODEL_CHOICES = {
 def run_eval(model: str, json_mode: bool) -> None:
     # model_predictor_cls = MODEL_CHOICES[model]
     model_predictor = MistralInstructPredictor()
+
+    from transformers import pipeline
+
+    pipe = pipeline("text-generation",
+                    model=model_predictor.model,
+                    tokenizer=model_predictor.tokenizer,
+                    batch_size=1,
+                    max_new_tokens=512, device=0)
     dataset = OpenMathDataset()
     for i in range(1,10):
         sample = dataset[i]
@@ -42,12 +51,12 @@ def run_eval(model: str, json_mode: bool) -> None:
         }
         print(sample)
         # Jsonformer should take care of the input
-        jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
-        generated_data = jsonformer()
+        # jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
+        # generated_data = jsonformer()
+        #
+        # print('with json_mode', generated_data)
 
-        print('with json_mode', generated_data)
-
-        answer = model_predictor.generate_answer(sample)
+        answer = pipe(sample)
 
         print('no json mode', answer)
         print('recovered', find_and_parse_json(answer))
