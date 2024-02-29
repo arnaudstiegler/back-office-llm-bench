@@ -37,6 +37,8 @@ def run_eval(model: str, json_mode: bool) -> None:
                     batch_size=1,
                     max_new_tokens=512, device=0)
     dataset = OpenMathDataset()
+
+    answer_correct = []
     for i in range(1,10):
         sample = dataset[i]
         # prompt = model_predictor.format_sample_into_prompt(sample)
@@ -66,6 +68,15 @@ def run_eval(model: str, json_mode: bool) -> None:
         print('recovered', find_and_parse_json(answer[0]['generated_text']))
         print('answer', sample.answer)
 
+        if (find_and_parse_json(answer[0]['generated_text']) and
+            find_and_parse_json(answer[0]['generated_text']).get('answer')
+                and find_and_parse_json(answer[0]['generated_text'])['answer'] == sample.answer):
+            answer_correct.append(1)
+        else:
+            answer_correct.append(0)
+
+        if len(answer_correct) > 0:
+            print(sum(answer_correct) / len(answer_correct))
         print('\n')
 
 
