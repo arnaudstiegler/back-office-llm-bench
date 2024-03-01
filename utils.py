@@ -1,5 +1,10 @@
 import json
 import re
+import logging
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def find_and_parse_json(s):
@@ -17,5 +22,7 @@ def find_and_parse_json(s):
             parsed_json = json.loads(json_str)
             return parsed_json
         except json.JSONDecodeError:
+            logger.warning(f"Encountered Json decoder error with input: {json_str}")
             return None
+    logger.warning(f"Regex did not match anything with input: {s}")
     return None

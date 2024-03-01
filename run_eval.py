@@ -2,11 +2,11 @@ import json
 import os
 
 import click
-from transformers import pipeline
 
 from predictors import (
     MistralOpenOrcaPredictor,
     MistralInstructPredictor,
+    MAX_NEW_TOKENS,
 )
 from dataset import OpenMathDataset
 from utils import find_and_parse_json
@@ -22,66 +22,64 @@ MODEL_CHOICES = {
 
 @click.command()
 @click.option(
-    "--model", type=click.Choice(list(MODEL_CHOICES.keys())), default="mistral-instruct",
+    "--model",
+    type=click.Choice(list(MODEL_CHOICES.keys())),
+    default="mistral-instruct",
 )
 @click.option("--json_mode", is_flag=True)
 def run_eval(model: str, json_mode: bool) -> None:
     # model_predictor_cls = MODEL_CHOICES[model]
     model_predictor = MistralInstructPredictor()
-
-    from transformers import pipeline
-
-    pipe = pipeline("text-generation",
-                    model=model_predictor.model,
-                    tokenizer=model_predictor.tokenizer,
-                    batch_size=1,
-                    max_new_tokens=512, device=0)
     dataset = OpenMathDataset()
 
     answer_correct = []
-    for i in range(1,100):
+    for i in range(1, 100):
         sample = dataset[i]
         # prompt = model_predictor.format_sample_into_prompt(sample)
 
-        # if json_mode:
         from jsonformer import Jsonformer
+
         json_schema = {
             "type": "object",
             "properties": {
                 "answer": {"type": "number"},
-            }
+            },
         }
         # print(sample)
         # Jsonformer should take care of the input
-        # jsonformer = Jsonformer(model_predictor.model, model_predictor.tokenizer, json_schema, prompt)
-        # generated_data = jsonformer()
+        prompt = (
+            "[INST] " + sample.task_input + " " + sample.task_definition + " [/INST]"
+        )
+        jsonformer = Jsonformer(
+            model_predictor.model,
+            model_predictor.tokenizer,
+            json_schema,
+            prompt,
+            max_string_token_length=MAX_NEW_TOKENS,
+        )
+        generated_data = jsonformer()
         #
-        # print('with json_mode', generated_data)
-        instructions = '''
-        First reason and find the solution to the question. Then format the answer of the question 
-        as a json dictionnary with a key "answer" and the value the corresponding numerical answer 
-        to the question. Make sure there is one and only one json dict in your answer and that nothing
-        else is formatted similarly (i will parse that answer for a json)
-        '''
+        print("with json_mode", generated_data)
+
         # TODO: should I add '[INST]' + prompt + '[/INST]'?
         # -> The answer to that is YES!
-        answer = pipe('[INST]' + sample.task_input + instructions + '[/INST]')
+        answer = model_predictor.predict(sample)
 
-        print('recovered', find_and_parse_json(answer[0]['generated_text']))
-        print('answer', sample.answer)
+        print("recovered", find_and_parse_json(answer))
+        print("answer", sample.answer)
 
-        if (find_and_parse_json(answer[0]['generated_text']) and
-            find_and_parse_json(answer[0]['generated_text']).get('answer')
-                and str(find_and_parse_json(answer[0]['generated_text'])['answer']) == sample.answer):
+        if (
+            find_and_parse_json(answer)
+            and find_and_parse_json(answer).get("answer")
+            and str(answer) == sample.answer
+        ):
             answer_correct.append(1)
         else:
             answer_correct.append(0)
 
         if len(answer_correct) > 0:
             print(sum(answer_correct) / len(answer_correct))
-        print('\n')
-
-
+        print("\n")
 
     # valid_json = []
     # correct = []
