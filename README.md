@@ -7,7 +7,7 @@ Benchmarking LLMs on plain back-office tasks
 - <s>Simpler eval pipeline</s>
 - <s>Retrieve same output as HuggingFaceChat</s>
 - ~~Find the highest batch size we can handle on a g5~~
-- Retrieve the same output as pipeline with a normal generate (to handle jsonformer)
+- ~~Retrieve the same output as pipeline with a normal generate (to handle jsonformer)~~
 - Test out the pipeline stuff with OpenOrca
 - Create a metric class to count recovered json and correct answer
 - Add batching to the pipeline
