@@ -100,4 +100,4 @@ class MistralInstructPredictor(Predictor):
         return answer
 
     def post_process_output(self, outputs: torch.Tensor) -> str:
-        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]

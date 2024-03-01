@@ -40,12 +40,10 @@ class OpenMathDataset:
 
     @property
     def get_task_definition(self) -> str:
-        return """
-        First reason and find the solution to the question. Then format the answer of the question 
+        return """First reason and find the solution to the question. Then format the answer of the question 
         as a json dictionnary with a key "answer" and the value the corresponding numerical answer 
         to the question. Make sure there is one and only one json dict in your answer and that nothing
-        else is formatted similarly (i will parse that answer for a json)
-        """
+        else is formatted similarly (i will parse that answer for a json)"""
 
     def __getitem__(self, item: int) -> Sample:
         sample = self.dataset[item]
