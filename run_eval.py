@@ -39,7 +39,7 @@ def run_eval(model: str, output_dir: str, json_mode: bool) -> None:
     dataset = OpenMathDataset()
 
     predictions = []
-    for i in tqdm(range(1, 100)):
+    for i in tqdm(range(1, 1001)):
         sample = dataset[i]
 
         if json_mode:
