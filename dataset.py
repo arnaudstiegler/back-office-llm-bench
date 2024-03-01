@@ -55,6 +55,9 @@ class OpenMathDataset:
             prompt=sample["question"] + "  \n  " + self.task_definition,
         )
 
+    def __len__(self):
+        return len(self.dataset)
+
 
 if __name__ == "__main__":
     data = OpenMathDataset()
