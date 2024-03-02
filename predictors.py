@@ -2,7 +2,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
 from dataset import Sample
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -65,33 +65,24 @@ class MistralOpenOrcaPredictor(Predictor):
         self.tokenizer = AutoTokenizer.from_pretrained("Open-Orca/Mistral-7B-OpenOrca")
 
     def format_sample_into_prompt(sample: Sample) -> str:
-        return ' '.join([sample.task_input, sample.task_definition])
-
-    def predict(self, sample: Sample):
-        prompt = self.format_sample_into_prompt(sample)
+        prompt = ' '.join([sample.task_input, sample.task_definition])
         prefix = "<|im_start|>"
         suffix = "<|im_end|>\n"
         sys_format = prefix + "system\n" + SYS_PROMPT + suffix
         user_format = prefix + "user\n" + prompt + suffix
         assistant_format = prefix + "assistant\n"
         input_text = sys_format + user_format + assistant_format
+        return input_text
 
-        inputs = self.tokenizer(
-            input_text, return_tensors="pt", return_attention_mask=True
-        ).to(device)
+    def predict(self, batch: Dict[str, Any]):
         outputs = self.model.generate(
-            **inputs, generation_config=self.generation_config
+            **batch, generation_config=self.generation_config
         )
-
         return self.post_process_output(outputs)
 
     def post_process_output(self, outputs: torch.Tensor) -> str:
         # Assuming the output will not contain "assistant" more than once
-        return (
-            self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
-            .split("assistant")[1]
-            .strip()
-        )
+        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
 
 class MistralInstructPredictor(Predictor):
