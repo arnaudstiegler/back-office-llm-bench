@@ -23,7 +23,7 @@ MAX_NEW_TOKENS = 1000
 class Predictor:
     @staticmethod
     def format_sample_into_prompt(sample: Sample) -> str:
-        return sample.task_input + " " + sample.task_definition
+        raise NotImplementedError
 
     def predict(self, sample: Sample) -> str:
         raise NotImplementedError
@@ -41,6 +41,18 @@ class Predictor:
             pad_token_id=self.tokenizer.eos_token_id,
         )
 
+    def collate_fn(self, batch: List[Sample]):
+        # TODO: issue with declaring tokenizer type
+        # To more easily reuse the base tokenizer batch_encode, we make it a predictor method
+        # and embed the model-specific formatting in it
+        prompts = [self.format_prompt(sample) for sample in batch]
+        # Will pad left
+        inputs = self.tokenizer(
+            prompts, return_tensors="pt", padding=True
+        )
+        import ipdb; ipdb.set_trace()
+        return {**inputs, 'samples': batch}
+
 
 class MistralOpenOrcaPredictor(Predictor):
     def __init__(self):
@@ -49,7 +61,11 @@ class MistralOpenOrcaPredictor(Predictor):
             torch_dtype=torch.float16 if device == "cuda" else torch.float32,
             attn_implementation=ATTN_TO_USE,
         ).to(device)
+        self.model = torch.compile(self.model)
         self.tokenizer = AutoTokenizer.from_pretrained("Open-Orca/Mistral-7B-OpenOrca")
+
+    def format_sample_into_prompt(sample: Sample) -> str:
+        return ' '.join([sample.task_input, sample.task_definition])
 
     def predict(self, sample: Sample):
         prompt = self.format_sample_into_prompt(sample)
@@ -97,16 +113,6 @@ class MistralInstructPredictor(Predictor):
         return " ".join(
             ["[INST]", sample.task_input, sample.task_definition, "[/INST]"]
         )
-
-    def collate_fn(self, batch: List[Sample]):
-        # To more easily reuse the base tokenizer batch_encode, we make it a predictor method
-        # and embed the model-specific formatting in it
-        prompts = [self.format_prompt(sample) for sample in batch]
-        # Will pad left
-        inputs = self.tokenizer(
-            prompts, return_tensors="pt", padding=True
-        )
-        return {**inputs, 'samples': batch}
 
     def predict(self, batch: Dict[str, torch.Tensor]) -> List[str]:
         generated_ids = self.model.generate(
