@@ -75,10 +75,12 @@ class MistralOpenOrcaPredictor(Predictor):
         return input_text
 
     def predict(self, batch: Dict[str, Any]):
-        outputs = self.model.generate(
-            **batch, generation_config=self.generation_config
+        generated_ids = self.model.generate(
+            input_ids=batch["input_ids"].to("cuda"),
+            attention_mask=batch["attention_mask"].to("cuda"),
+            generation_config=self.generation_config,
         )
-        return self.post_process_output(outputs)
+        return self.post_process_output(generated_ids)
 
     def post_process_output(self, outputs: torch.Tensor) -> str:
         # Assuming the output will not contain "assistant" more than once
