@@ -36,7 +36,7 @@ MODEL_CHOICES = {
 @click.option('--batch_size', type=int, default=1)
 @click.option("--json_mode", is_flag=True)
 def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
-    model_predictor = MODEL_CHOICES[model]
+    model_predictor = MODEL_CHOICES[model].__init__()
     dataset = OpenMathDataset()
 
     predictions = []
