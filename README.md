@@ -3,14 +3,14 @@ Benchmarking LLMs on plain back-office tasks
 
 ## TODOS:
 - For the FinQA dataset, find the original dataset and/or iterate on the prompt to focus on the last question only
-- <s>Add support for OpenMath</s>
-- <s>Simpler eval pipeline</s>
-- <s>Retrieve same output as HuggingFaceChat</s>
+- ~~Add support for OpenMath~~
+- ~~Simpler eval pipeline~~
+- ~~Retrieve same output as HuggingFaceChat~~
 - ~~Find the highest batch size we can handle on a g5~~
 - ~~Retrieve the same output as pipeline with a normal generate (to handle jsonformer)~~
+- Add batching to the pipeline
 - Test out the pipeline stuff with OpenOrca
 - Create a metric class to count recovered json and correct answer
-- Add batching to the pipeline
 - Find easier dataset than OpenMAth
 
 ## Goals

@@ -1,17 +1,17 @@
 import json
 import os
+from dataclasses import asdict
 
 import click
 from jsonformer import Jsonformer
-
+from tqdm import tqdm
+from torch.utils.data import DataLoader
 from dataset import OpenMathDataset
 from predictors import (
     MistralOpenOrcaPredictor,
     MistralInstructPredictor,
     MAX_NEW_TOKENS,
 )
-from dataclasses import asdict
-from tqdm import tqdm
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 samples = json.load(open(os.path.join(dir_path, "tasks_manual.json")))["samples"]
@@ -39,19 +39,19 @@ def run_eval(model: str, output_dir: str, json_mode: bool) -> None:
     dataset = OpenMathDataset()
 
     predictions = []
-    for i in tqdm(range(1, 1001)):
-        sample = dataset[i]
 
-        if json_mode:
+    if json_mode:
+        # There is no possibility to batch inference with jsonformer (AFAIK)
+        for i in tqdm(range(1, 1001)):
+            sample = dataset[i]
             json_schema = {
                 "type": "object",
                 "properties": {
-                    "answer": {"type": "string"},  # Has to be a string for OpenMath as the answer can sometimes be an expression rather than numerical
+                    "answer": {"type": "string"},
+                    # Has to be a string for OpenMath as the answer can sometimes be an expression rather than numerical
                 },
             }
-            prompt = (
-                    "[INST] " + sample.task_input + " " + sample.task_definition + " [/INST]"
-            )
+            prompt = model_predictor.format_prompt(sample)
             jsonformer = Jsonformer(
                 model_predictor.model,
                 model_predictor.tokenizer,
@@ -61,17 +61,28 @@ def run_eval(model: str, output_dir: str, json_mode: bool) -> None:
             )
             answer = jsonformer()
 
-        else:
-            answer = model_predictor.predict(sample)
+            predictions.append(
+                {
+                    "sample": asdict(sample),
+                    "answer": answer,
+                }
+            )
 
-        predictions.append(
-            {
-                'sample': asdict(sample),
-                'answer': answer,
-            }
+    else:
+        train_dataloader = DataLoader(
+            dataset, batch_size=10, shuffle=False, collate_fn=model_predictor.collate_fn
         )
+        for batch in tqdm(train_dataloader):
+            preds = model_predictor.predict(batch)
+            print(preds)
+            import ipdb
 
-        json.dump(predictions, open(os.path.join(output_dir, f'{model}_json-mode={json_mode}.json'), 'w'))
+            ipdb.set_trace()
+
+    json.dump(
+        predictions,
+        open(os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"),
+    )
 
 
 if __name__ == "__main__":

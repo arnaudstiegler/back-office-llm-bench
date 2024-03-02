@@ -2,6 +2,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
 from dataset import Sample
+from typing import Dict, List
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # None means we use regular attention
@@ -86,18 +88,31 @@ class MistralInstructPredictor(Predictor):
         self.tokenizer = AutoTokenizer.from_pretrained(
             "mistralai/Mistral-7B-Instruct-v0.2"
         )
+        # the tokenizer doesn't natively have a pad token
+        self.tokenizer.pad_token_id = self.tokenizer.unk_token_id
 
-    def predict(self, sample: Sample) -> str:
-        prompt = self.format_sample_into_prompt(sample)
-        encoded_prompt = self.tokenizer(
-            "[INST]" + prompt + "[/INST]", return_tensors="pt"
-        )["input_ids"]
-
-        generated_ids = self.model.generate(
-            encoded_prompt.to("cuda"), generation_config=self.generation_config
+    @staticmethod
+    def format_prompt(sample: Sample) -> str:
+        return " ".join(
+            ["[INST]", sample.task_input, sample.task_definition, "[/INST]"]
         )
-        answer = self.post_process_output(generated_ids)
-        return answer
 
-    def post_process_output(self, outputs: torch.Tensor) -> str:
-        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+    def collate_fn(self, batch: List[Sample]):
+        # To more easily reuse the base tokenizer batch_encode, we make it a predictor method
+        # and embed the model-specific formatting in it
+        prompts = [self.format_prompt(sample) for sample in batch]
+        inputs = self.tokenizer(
+            prompts, return_tensors="pt", padding_size="left", padding=True
+        )
+        return inputs
+
+    def predict(self, batch: Dict[str, torch.Tensor]) -> List[str]:
+        generated_ids = self.model.generate(
+            input_ids=batch["input_ids"].to("cuda"),
+            attention_mask=batch["attention_mask"].to("cuda"),
+            generation_config=self.generation_config,
+        )
+        return self.post_process_output(generated_ids)
+
+    def post_process_output(self, outputs: torch.Tensor) -> List[str]:
+        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
