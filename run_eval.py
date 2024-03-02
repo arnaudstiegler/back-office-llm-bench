@@ -68,6 +68,10 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
                     "answer": answer,
                 }
             )
+            json.dump(
+                predictions,
+                open(os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"),
+            )
 
     else:
         train_dataloader = DataLoader(
@@ -84,10 +88,10 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
                     }
                 )
 
-    json.dump(
-        predictions,
-        open(os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"),
-    )
+            json.dump(
+                predictions,
+                open(os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"),
+            )
 
 
 if __name__ == "__main__":
