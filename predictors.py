@@ -63,6 +63,8 @@ class MistralOpenOrcaPredictor(Predictor):
         ).to(device)
         self.model = torch.compile(self.model)
         self.tokenizer = AutoTokenizer.from_pretrained("Open-Orca/Mistral-7B-OpenOrca")
+        # the tokenizer doesn't natively have a pad token
+        self.tokenizer.pad_token_id = self.tokenizer.unk_token_id
 
     @staticmethod
     def format_prompt(sample: Sample) -> str:
