@@ -85,6 +85,7 @@ class MistralInstructPredictor(Predictor):
             torch_dtype=torch.float16 if device == "cuda" else torch.float32,
             attn_implementation=ATTN_TO_USE,
         ).to(device)
+        self.model = torch.compile(self.model)
         self.tokenizer = AutoTokenizer.from_pretrained(
             "mistralai/Mistral-7B-Instruct-v0.2"
         )

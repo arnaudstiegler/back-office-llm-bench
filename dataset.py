@@ -56,7 +56,8 @@ class OpenMathDataset:
         )
 
     def __len__(self):
-        return len(self.dataset)
+        # Limit it to 1k samples on purpose
+        return 1000
 
 
 if __name__ == "__main__":

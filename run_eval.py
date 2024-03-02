@@ -33,8 +33,9 @@ MODEL_CHOICES = {
     type=str,
     default="/home/ubuntu/predictions/",
 )
+@click.option('--batch_size', type=int, default=1)
 @click.option("--json_mode", is_flag=True)
-def run_eval(model: str, output_dir: str, json_mode: bool) -> None:
+def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
     model_predictor = MistralInstructPredictor()
     dataset = OpenMathDataset()
 
@@ -70,7 +71,7 @@ def run_eval(model: str, output_dir: str, json_mode: bool) -> None:
 
     else:
         train_dataloader = DataLoader(
-            dataset, batch_size=10, shuffle=False, collate_fn=model_predictor.collate_fn
+            dataset, batch_size=batch_size, shuffle=False, collate_fn=model_predictor.collate_fn
         )
         for batch in tqdm(train_dataloader):
             preds = model_predictor.predict(batch)
