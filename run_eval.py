@@ -74,10 +74,14 @@ def run_eval(model: str, output_dir: str, json_mode: bool) -> None:
         )
         for batch in tqdm(train_dataloader):
             preds = model_predictor.predict(batch)
-            print(preds)
-            import ipdb
 
-            ipdb.set_trace()
+            for pred, sample in zip(preds, batch['samples']):
+                predictions.append(
+                    {
+                        "sample": asdict(sample),
+                        "answer": pred,
+                    }
+                )
 
     json.dump(
         predictions,

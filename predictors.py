@@ -101,10 +101,11 @@ class MistralInstructPredictor(Predictor):
         # To more easily reuse the base tokenizer batch_encode, we make it a predictor method
         # and embed the model-specific formatting in it
         prompts = [self.format_prompt(sample) for sample in batch]
+        # Will pad left
         inputs = self.tokenizer(
-            prompts, return_tensors="pt", padding_size="left", padding=True
+            prompts, return_tensors="pt", padding=True
         )
-        return inputs
+        return {**inputs, 'samples': batch}
 
     def predict(self, batch: Dict[str, torch.Tensor]) -> List[str]:
         generated_ids = self.model.generate(
