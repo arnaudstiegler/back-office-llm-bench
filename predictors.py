@@ -22,7 +22,7 @@ MAX_NEW_TOKENS = 1000
 
 class Predictor:
     @staticmethod
-    def format_sample_into_prompt(sample: Sample) -> str:
+    def format_prompt(sample: Sample) -> str:
         raise NotImplementedError
 
     def predict(self, sample: Sample) -> str:
@@ -64,7 +64,7 @@ class MistralOpenOrcaPredictor(Predictor):
         self.model = torch.compile(self.model)
         self.tokenizer = AutoTokenizer.from_pretrained("Open-Orca/Mistral-7B-OpenOrca")
 
-    def format_sample_into_prompt(sample: Sample) -> str:
+    def format_prompt(sample: Sample) -> str:
         prompt = ' '.join([sample.task_input, sample.task_definition])
         prefix = "<|im_start|>"
         suffix = "<|im_end|>\n"
