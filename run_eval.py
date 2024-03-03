@@ -24,19 +24,20 @@ MODEL_CHOICES = {
 
 def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
     model_predictor = MODEL_CHOICES[model]()
-    dataset = OpenMathDataset()
+    dataset = OpenMathDataset(json_mode=json_mode)
 
     predictions = []
 
     if json_mode:
         # There is no possibility to batch inference with jsonformer (AFAIK)
-        for i in tqdm(range(1, len(dataset)+1)):
+        for i in tqdm(range(1, len(dataset) + 1)):
             sample = dataset[i]
             json_schema = {
                 "type": "object",
                 "properties": {
                     "answer": {"type": "string"},
-                    # Has to be a string for OpenMath as the answer can sometimes be an expression rather than numerical
+                    # Has to be a string for OpenMath as the answer can sometimes be an
+                    # expression rather than numerical
                 },
             }
             prompt = model_predictor.format_prompt(sample)
@@ -57,17 +58,22 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
             )
             json.dump(
                 predictions,
-                open(os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"),
+                open(
+                    os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"
+                ),
             )
 
     else:
         train_dataloader = DataLoader(
-            dataset, batch_size=batch_size, shuffle=False, collate_fn=model_predictor.collate_fn
+            dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=model_predictor.collate_fn,
         )
         for batch in tqdm(train_dataloader):
             preds = model_predictor.predict(batch)
 
-            for pred, sample in zip(preds, batch['samples']):
+            for pred, sample in zip(preds, batch["samples"]):
                 predictions.append(
                     {
                         "sample": asdict(sample),
@@ -77,7 +83,9 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
 
             json.dump(
                 predictions,
-                open(os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"),
+                open(
+                    os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"
+                ),
             )
 
 
@@ -92,7 +100,7 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
     type=str,
     default="/home/ubuntu/predictions/",
 )
-@click.option('--batch_size', type=int, default=1)
+@click.option("--batch_size", type=int, default=1)
 @click.option("--json_mode", is_flag=True)
 def run_eval_cli(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
     return run_eval(model, output_dir, batch_size, json_mode)

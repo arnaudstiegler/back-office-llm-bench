@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any
-
+from torch.utils.data import Dataset
 from datasets import load_dataset
 
 
@@ -13,7 +12,7 @@ class Sample:
     prompt: str
 
 
-class FinanceTasksDataset:
+class FinanceTasksDataset(Dataset):
     def __init__(self) -> None:
         self.dataset = load_dataset("AdaptLLM/finance-tasks", "ConvFinQA")["test"]
         self.task_definition = """
@@ -33,16 +32,27 @@ class FinanceTasksDataset:
         )
 
 
-class OpenMathDataset:
-    def __init__(self):
+class OpenMathDataset(Dataset):
+    def __init__(self, json_mode: bool):
         self.dataset = load_dataset("nvidia/OpenMathInstruct-1")["validation"]
+        self.json_mode = json_mode
         self.task_definition = self.get_task_definition
 
     @property
     def get_task_definition(self) -> str:
+        # If json mode is on, the model cannot do the COT and instructions need to reflect that
+        if self.json_mode:
+            return """Return the answer to the math problem and format it as a json dictionnary with a key 
+            "answer" and the value the corresponding numerical answer to the question as a string."""
         return """First reason and find the solution to the question. Then format the answer of the question 
         as a json dictionnary with a key "answer" and the value the corresponding numerical answer 
-        to the question. Make sure there is one and only one json dict in your answer and that nothing
+        to the question as a string. 
+        For instance:
+        What is 1+1?
+        1+1=2, therefore the json return is: {'answer': '2'}
+        
+        Make sure there is one and only one json dict in your answer, that
+         all keys and values are valid strings, and that nothing
         else is formatted similarly (i will parse that answer for a json)"""
 
     def __getitem__(self, item: int) -> Sample:

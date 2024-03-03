@@ -47,10 +47,8 @@ class Predictor:
         # and embed the model-specific formatting in it
         prompts = [self.format_prompt(sample) for sample in batch]
         # Will pad left
-        inputs = self.tokenizer(
-            prompts, return_tensors="pt", padding=True
-        )
-        return {**inputs, 'samples': batch}
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True)
+        return {**inputs, "samples": batch}
 
 
 class MistralOpenOrcaPredictor(Predictor):
@@ -67,7 +65,7 @@ class MistralOpenOrcaPredictor(Predictor):
 
     @staticmethod
     def format_prompt(sample: Sample) -> str:
-        prompt = ' '.join([sample.task_input, sample.task_definition])
+        prompt = " ".join([sample.task_input, sample.task_definition])
         prefix = "<|im_start|>"
         suffix = "<|im_end|>\n"
         sys_format = prefix + "system\n" + SYS_PROMPT + suffix
