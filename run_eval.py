@@ -30,7 +30,7 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
 
     if json_mode:
         # There is no possibility to batch inference with jsonformer (AFAIK)
-        for i in tqdm(range(1, 1001)):
+        for i in tqdm(range(1, len(dataset)+1)):
             sample = dataset[i]
             json_schema = {
                 "type": "object",
