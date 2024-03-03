@@ -50,7 +50,6 @@ class Predictor:
         inputs = self.tokenizer(
             prompts, return_tensors="pt", padding=True
         )
-        import ipdb; ipdb.set_trace()
         return {**inputs, 'samples': batch}
 
 
