@@ -1,7 +1,6 @@
 import json
 import os
 from dataclasses import asdict
-
 import click
 from jsonformer import Jsonformer
 from tqdm import tqdm
@@ -23,11 +22,13 @@ MODEL_CHOICES = {
 
 
 def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
     model_predictor = MODEL_CHOICES[model]()
     dataset = OpenMathDataset(json_mode=json_mode)
 
     predictions = []
-
     if json_mode:
         # There is no possibility to batch inference with jsonformer (AFAIK)
         for i in tqdm(range(1, len(dataset) + 1)):

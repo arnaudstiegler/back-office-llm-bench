@@ -1,5 +1,15 @@
 from run_eval import run_eval
+from datetime import datetime
 
+
+def format_timestamp(timestamp: datetime) -> str:
+    # Format the timestamp into the desired string format
+    return timestamp.strftime("%Y-%m-%d_%H:%M:%S")
+
+
+# Example usage
+current_timestamp = datetime.now()
+formatted_timestamp = format_timestamp(current_timestamp)
 output_dir = "/home/ubuntu/predictions"
 
 run_eval(
