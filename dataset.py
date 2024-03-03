@@ -1,6 +1,9 @@
+import csv
 from dataclasses import dataclass
-from torch.utils.data import Dataset
+from typing import Dict, List, Generator, Any
+
 from datasets import load_dataset
+from torch.utils.data import Dataset
 
 
 @dataclass
@@ -8,7 +11,7 @@ class Sample:
     id: int
     task_definition: str
     task_input: str
-    answer: str
+    answer: str  #TODO: maybe reformat so that it's a json?
     prompt: str
 
 
@@ -70,6 +73,74 @@ class OpenMathDataset(Dataset):
         return 2000
 
 
+class KleisterNdaDataset(Dataset):
+    def __init__(self):
+        self.documents = self.parse_documents_tsv('./data/kleister_nda/in.tsv')
+        self.ground_truth = self.parse_ground_truth_tsv('./data/kleister_nda/expected.tsv')
+
+    @staticmethod
+    def read_tsv(path: str) -> Generator[List, Any, None]:
+        with open(path, 'r') as tsvfile:
+            reader = csv.reader(tsvfile, delimiter='\t', quoting=csv.QUOTE_NONE)
+            for item in reader:
+                yield item
+
+    def parse_documents_tsv(self, path: str) -> List[Dict[str, str]]:
+        documents = []
+        for item in self.read_tsv(path):
+            doc_name = item[0]
+            transcription = item[5]
+            documents.append(
+                {'filename': doc_name,
+                 'transcription': transcription
+                 }
+            )
+        return documents
+
+    @staticmethod
+    def string_to_json_dict(input_string: str) -> dict:
+        # Split the input string into key-value pairs
+        pairs = input_string.split(' ')
+        json_dict = {}
+        for pair in pairs:
+            key, value = pair.split('=')
+            # Check if the key already exists and is expected to have multiple values
+            if key in json_dict:
+                # If it's already a list, append the new value
+                if isinstance(json_dict[key], list):
+                    json_dict[key].append(value)
+                else:
+                    # Convert it into a list with the current and new value
+                    json_dict[key] = [json_dict[key], value]
+            else:
+                # Add the key-value pair to the dictionary
+                json_dict[key] = value
+        return json_dict
+
+    def parse_ground_truth_tsv(self, path) -> List[Dict[str, str]]:
+        ground_truth = []
+        for item in self.read_tsv(path):
+            ground_truth.append(
+                self.string_to_json_dict(item[0])
+            )
+        return ground_truth
+
+    def __getitem__(self, item: int):
+        document = self.documents[item]
+        ground_truth = self.ground_truth[item]
+        sample = Sample(
+            id=item,
+            task_definition='',
+            task_input=document['transcription'],
+            answer=str(ground_truth),
+            prompt=''
+        )
+        return sample
+
+    def __len__(self) -> int:
+        return len(self.ground_truth)
+
+
 if __name__ == "__main__":
-    data = OpenMathDataset()
+    data = KleisterNdaDataset()
     print(data[0])

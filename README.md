@@ -16,8 +16,13 @@ Benchmarking LLMs on plain back-office tasks
 ## Goals
 
 - When it comes to executing a task + formatting the answer in a machine-digestible way, how do model perform?
-- Chatbot (instruct models) tend to be overly verbose, can that deteriorate results?
-- Should you force JSON format (jsonformer or other)? Maybe messes up with Chain-of-thought
+- Chatbot (instruct models) tend to be overly verbose, but if we can retrieve the answer from a json format, does that matter?
+- Should you force JSON format (jsonformer or other)? Maybe messes up with Chain-of-thought or other
+
+
+## Datasets
+- OpenMath (maths, reasoning)
+- Kleister NDA (information extraction)
 
 
 ## Task types
