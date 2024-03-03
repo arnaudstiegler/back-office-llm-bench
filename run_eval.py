@@ -22,19 +22,6 @@ MODEL_CHOICES = {
 }
 
 
-@click.command()
-@click.option(
-    "--model",
-    type=click.Choice(list(MODEL_CHOICES.keys())),
-    default="mistral-instruct",
-)
-@click.option(
-    "--output_dir",
-    type=str,
-    default="/home/ubuntu/predictions/",
-)
-@click.option('--batch_size', type=int, default=1)
-@click.option("--json_mode", is_flag=True)
 def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
     model_predictor = MODEL_CHOICES[model]()
     dataset = OpenMathDataset()
@@ -94,5 +81,22 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
             )
 
 
+@click.command()
+@click.option(
+    "--model",
+    type=click.Choice(list(MODEL_CHOICES.keys())),
+    default="mistral-instruct",
+)
+@click.option(
+    "--output_dir",
+    type=str,
+    default="/home/ubuntu/predictions/",
+)
+@click.option('--batch_size', type=int, default=1)
+@click.option("--json_mode", is_flag=True)
+def run_eval_cli(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
+    return run_eval(model, output_dir, batch_size, json_mode)
+
+
 if __name__ == "__main__":
-    run_eval()
+    run_eval_cli()
