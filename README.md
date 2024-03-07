@@ -10,8 +10,13 @@ Benchmarking LLMs on plain back-office tasks
 - ~~Retrieve the same output as pipeline with a normal generate (to handle jsonformer)~~
 - ~~Add batching to the pipeline~~
 - ~~Test out the pipeline stuff with OpenOrca~~
-- Create a metric class to count recovered json and correct answer
-- Find easier dataset than OpenMAth
+- ~~Create a metric class to count recovered json and correct answer~~
+- ~~Find easier dataset than OpenMAth~~
+- Create prompt etc... for the Kleister NDA dataset
+- Eval on Kleister NDA
+- Fix the generation length to prevent OOMs
+- Try DSPy to generate samples
+- Make sure adding an example to the prompt doesn't mess up the prediction
 
 ## Goals
 

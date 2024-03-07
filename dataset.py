@@ -74,9 +74,43 @@ class OpenMathDataset(Dataset):
 
 
 class KleisterNdaDataset(Dataset):
-    def __init__(self):
+    def __init__(self, json_mode: bool):
         self.documents = self.parse_documents_tsv('./data/kleister_nda/in.tsv')
         self.ground_truth = self.parse_ground_truth_tsv('./data/kleister_nda/expected.tsv')
+        self.json_mode = json_mode
+
+    @property
+    def get_task_definition(self)-> str:
+        # If json mode is on, the model cannot do the COT and instructions need to reflect that
+        return '''
+        The text above is the transcription of an NDA. 
+
+        # Extraction:
+        There are up to 6 attributes to be extracted from the transcription:
+
+        effective_date - date in YYYY-MM-DD format, at which point the contract is legally binding,
+        jurisdiction - under which state or country jurisdiction is the contract signed,
+        party - party or parties of the contract,
+        term - length of the legal contract as expressed in the document.
+        Note that party usually occur more than once.
+
+        # Normalization:
+        The expected pieces of information were normalized to some degree:
+
+        in attribute values, all spaces   and colons : were replaced with an underscores _,
+        all expected dates should be returned in YYYY-MM-DD format,
+        values for attribute term are normalized with the same original units e.g. eleven months is changed to 11_months; all of them are in the same format: {number}_{units}.
+
+        # Output Format:
+        The output has to be a valid json with the following format:
+        {"effective_date": "value", "jurisdiction":"value", "party":["value_1", "value_2", ...], "term":"value"}
+
+        So for instance:
+        {"effective_date": "2020-01-12", "jurisdiction": "Utah", "party": ["Bill_Gates", "Coca_Cola_Inc."]}
+
+        You can reason and explain your choices before returning the JSON object, you just have to have that json object in the output
+        '''
+
 
     @staticmethod
     def read_tsv(path: str) -> Generator[List, Any, None]:

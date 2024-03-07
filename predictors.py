@@ -92,7 +92,7 @@ class MistralInstructPredictor(Predictor):
         self.model = AutoModelForCausalLM.from_pretrained(
             "mistralai/Mistral-7B-Instruct-v0.2",
             torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-            attn_implementation=ATTN_TO_USE,
+            attn_implementation="flash_attention_2" if torch.cuda.is_available() else None,
         ).to(device)
         self.model = torch.compile(self.model)
         self.tokenizer = AutoTokenizer.from_pretrained(
