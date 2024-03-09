@@ -1,6 +1,6 @@
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
-from dataset import MultiHopQADataset
+from dataset import MultiHopQADataset, KleisterNdaDataset
 from utils import find_and_parse_json
 import json
 from tqdm import tqdm
@@ -22,7 +22,7 @@ def compute_cost(response: ChatCompletion) -> float:
 
 client = OpenAI()
 json_mode = False
-dataset = MultiHopQADataset(json_mode=json_mode)
+dataset = KleisterNdaDataset(json_mode=json_mode)
 predictions = []
 for i in tqdm(range(len(dataset))):
     try:
@@ -41,7 +41,7 @@ for i in tqdm(range(len(dataset))):
         json.dump(
             predictions,
             open(
-                f'openai_predictions/multi_hop_qa/predictions_{"not_" if not json_mode else ""}json_mode.json',
+                f'openai_predictions/kleister_nda/predictions_{"not_" if not json_mode else ""}json_mode.json',
                 "w",
             ),
         )
