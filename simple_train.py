@@ -37,12 +37,12 @@ def prepare_sample(sample: Dict[str, str]):
         padding="max_length",
     )
     # Note: supervising the question as well, might be changed later
-    return {'input_ids': question['input_ids'], 'labels': question['input_ids'].copy()}
+    return {'input_ids': question['input_ids']}
 
 
 preprocessed_val_map = val.map(prepare_sample)
 
-model = prepare_model_for_kbit_training(model)
+# model = prepare_model_for_kbit_training(model)
 
 config = LoraConfig(
     r=8,
@@ -81,7 +81,7 @@ trainer = Trainer(
     eval_dataset=preprocessed_val_map,
     args=TrainingArguments(
         output_dir='test_run/',
-        warmup_steps=5,
+        warmup_steps=5, # TODO: update that
         per_device_train_batch_size=1,
         gradient_checkpointing=True,
         gradient_accumulation_steps=4,
