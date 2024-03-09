@@ -12,9 +12,7 @@ current_timestamp = datetime.now()
 formatted_timestamp = format_timestamp(current_timestamp)
 output_dir = "/home/ubuntu/predictions"
 
-run_eval(
-    model="mistral-instruct", output_dir=output_dir, batch_size=5, json_mode=False
-)
+run_eval(model="mistral-instruct", output_dir=output_dir, batch_size=5, json_mode=False)
 run_eval(model="mistral-instruct", output_dir=output_dir, batch_size=1, json_mode=True)
 run_eval(model="mistral-orca", output_dir=output_dir, batch_size=5, json_mode=False)
 run_eval(model="mistral-orca", output_dir=output_dir, batch_size=1, json_mode=True)

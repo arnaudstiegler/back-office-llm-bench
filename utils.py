@@ -8,21 +8,22 @@ logger.setLevel(logging.INFO)
 
 
 def find_and_parse_json(s):
-    # Regular expression pattern to find a JSON object
-    # This pattern assumes the JSON does not contain nested objects or arrays
-    pattern = r"\{[^{}]*\}"
+    # Attempt to find a JSON-like substring within the input string
+    # This pattern is a simplified approach and might not cover all edge cases
+    pattern = r"\{.*?\}"
+    matches = re.findall(pattern, s, re.DOTALL)
 
-    # Search for JSON string within the input
-    match = re.search(pattern, s)
+    for match in matches:
+        # Attempt to correct common deviations from the JSON standard:
+        # Convert single quotes to double quotes (this might introduce errors if single quotes are used within strings)
+        corrected_match = match.replace("'", '"')
 
-    # If a match is found, parse the JSON string
-    if match:
-        json_str = match.group(0)
+        # Attempt to parse the corrected string as JSON
         try:
-            parsed_json = json.loads(json_str)
+            parsed_json = json.loads(corrected_match)
             return parsed_json
         except json.JSONDecodeError:
-            logger.warning(f"Encountered Json decoder error with input: {json_str}")
-            return None
-    logger.warning(f"Regex did not match anything with input: {s}")
+            continue  # If parsing fails, continue to the next match
+
+    # If no valid JSON object was found and successfully parsed, return None
     return None
