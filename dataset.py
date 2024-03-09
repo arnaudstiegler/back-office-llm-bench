@@ -199,6 +199,7 @@ class MultiHopQADataset(Dataset):
         The output would be:
         {"answer": "USA"}
         Typically, the answer should only be a few words and not a sentence.
+        Also, do not put " or ' in the value of the JSON because that prevents me from parsing the json within the string.
         
         """
         if not self.json_mode:

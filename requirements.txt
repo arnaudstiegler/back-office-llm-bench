@@ -10,3 +10,5 @@ click
 openai
 protobuf
 jupyterlab
+wandb
+peft
