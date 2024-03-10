@@ -7,6 +7,7 @@ from datasets import Dataset as HF_Dataset
 from torch.utils.data import Dataset
 import json
 
+
 @dataclass
 class Sample:
     id: int

@@ -36,7 +36,8 @@ for i in tqdm(range(len(dataset))):
         )
         response_dict = response.dict()
         from dataclasses import asdict
-        response_dict['sample'] = asdict(dataset[i])
+
+        response_dict["sample"] = asdict(dataset[i])
         predictions.append(response_dict)
         json.dump(
             predictions,
