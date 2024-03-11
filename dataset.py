@@ -45,7 +45,7 @@ class OpenMathDataset(Dataset):
     @property
     def get_task_definition(self) -> str:
         # If json mode is on, the model cannot do the COT and instructions need to reflect that
-        prompt =  """Find the solution to the question. Then format the answer of the question 
+        prompt = """Find the solution to the question. Then format the answer of the question 
         as a json dictionnary with a key "answer" and the value the corresponding numerical answer 
         to the question as a string. 
         For instance:
@@ -58,7 +58,7 @@ class OpenMathDataset(Dataset):
 
         if not self.json_mode:
             # To help with COT
-            prompt = prompt + 'Think step by step and reason'
+            prompt = prompt + "Think step by step and reason"
         return prompt
 
     def __getitem__(self, item: int) -> Sample:
@@ -180,6 +180,7 @@ class KleisterNdaDataset(Dataset):
         # return len(self.ground_truth)
         return 5
 
+
 class MultiHopQADataset(Dataset):
     def __init__(self, json_mode: bool):
         self.dataset = self.filter_samples(
@@ -224,6 +225,7 @@ class MultiHopQADataset(Dataset):
         # Limit it to 2k samples on purpose
         # return 500
         return 5
+
 
 if __name__ == "__main__":
     data = MultiHopQADataset(json_mode=False)

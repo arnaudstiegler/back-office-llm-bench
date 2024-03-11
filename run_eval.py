@@ -5,7 +5,7 @@ import click
 from jsonformer import Jsonformer
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-from dataset import OpenMathDataset
+from dataset import OpenMathDataset, KleisterNdaDataset, MultiHopQADataset
 from predictors import (
     MistralOpenOrcaPredictor,
     MistralInstructPredictor,
@@ -21,20 +21,22 @@ MODEL_CHOICES = {
 }
 
 
-def run_eval(model: str, output_dir: str, batch_size: int, dataset_name: str, json_mode: bool) -> None:
+def run_eval(
+    model: str, output_dir: str, batch_size: int, dataset_name: str, json_mode: bool
+) -> None:
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
     model_predictor = MODEL_CHOICES[model]()
 
-    if dataset_name == 'open_math':
+    if dataset_name == "open_math":
         dataset = OpenMathDataset(json_mode=json_mode)
-    elif dataset_name == 'kleister_nda':
-        dataset = OpenMathDataset(json_mode=json_mode)
-    elif dataset_name == 'multi_hop_qa':
-        dataset = OpenMathDataset(json_mode=json_mode)
+    elif dataset_name == "kleister_nda":
+        dataset = KleisterNdaDataset(json_mode=json_mode)
+    elif dataset_name == "multi_hop_qa":
+        dataset = MultiHopQADataset(json_mode=json_mode)
     else:
-        raise ValueError(f'No such dataset: {dataset_name}')
+        raise ValueError(f"No such dataset: {dataset_name}")
 
     predictions = []
     if json_mode:
@@ -60,7 +62,7 @@ def run_eval(model: str, output_dir: str, batch_size: int, dataset_name: str, js
             answer = jsonformer()
 
             print(answer, asdict(sample))
-            print('\n')
+            print("\n")
 
             predictions.append(
                 {
@@ -94,7 +96,7 @@ def run_eval(model: str, output_dir: str, batch_size: int, dataset_name: str, js
                 )
 
             print(pred, asdict(sample))
-            print('\n')
+            print("\n")
 
             json.dump(
                 predictions,

@@ -13,3 +13,4 @@ jupyterlab
 wandb
 peft
 bitsandbytes
+jsonformer

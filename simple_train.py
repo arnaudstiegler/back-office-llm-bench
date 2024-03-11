@@ -51,7 +51,7 @@ def train():
         # Note: supervising the question as well, might be changed later
         return {
             "input_ids": question["input_ids"],
-            "attention_mask": question['attention_mask'],
+            "attention_mask": question["attention_mask"],
             "labels": question["input_ids"].clone(),
         }
 
