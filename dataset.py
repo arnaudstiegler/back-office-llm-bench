@@ -45,10 +45,7 @@ class OpenMathDataset(Dataset):
     @property
     def get_task_definition(self) -> str:
         # If json mode is on, the model cannot do the COT and instructions need to reflect that
-        if self.json_mode:
-            return """Return the answer to the math problem and format it as a json dictionnary with a key 
-            "answer" and the value the corresponding numerical answer to the question as a string."""
-        return """First reason and find the solution to the question. Then format the answer of the question 
+        prompt =  """Find the solution to the question. Then format the answer of the question 
         as a json dictionnary with a key "answer" and the value the corresponding numerical answer 
         to the question as a string. 
         For instance:
@@ -58,6 +55,11 @@ class OpenMathDataset(Dataset):
         Make sure there is one and only one json dict in your answer, that
          all keys and values are valid strings, and that nothing
         else is formatted similarly (i will parse that answer for a json)"""
+
+        if not self.json_mode:
+            # To help with COT
+            prompt = prompt + 'Think step by step and reason'
+        return prompt
 
     def __getitem__(self, item: int) -> Sample:
         sample = self.dataset[item]
@@ -71,7 +73,8 @@ class OpenMathDataset(Dataset):
 
     def __len__(self):
         # Limit it to 2k samples on purpose
-        return 2000
+        # return 2000
+        return 5
 
 
 class KleisterNdaDataset(Dataset):
@@ -163,8 +166,8 @@ class KleisterNdaDataset(Dataset):
         ground_truth = self.ground_truth[item]
         sample = Sample(
             id=item,
-            task_definition="",
-            task_input=document["transcription"],
+            task_definition=self.get_task_definition,
+            task_input="Transcription: " + document["transcription"],
             answer=json.dumps(ground_truth),
             prompt="Transcription: \n"
             + document["transcription"]
@@ -174,8 +177,8 @@ class KleisterNdaDataset(Dataset):
         return sample
 
     def __len__(self) -> int:
-        return len(self.ground_truth)
-
+        # return len(self.ground_truth)
+        return 5
 
 class MultiHopQADataset(Dataset):
     def __init__(self, json_mode: bool):
@@ -219,8 +222,8 @@ class MultiHopQADataset(Dataset):
 
     def __len__(self):
         # Limit it to 2k samples on purpose
-        return 500
-
+        # return 500
+        return 5
 
 if __name__ == "__main__":
     data = MultiHopQADataset(json_mode=False)

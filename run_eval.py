@@ -21,12 +21,20 @@ MODEL_CHOICES = {
 }
 
 
-def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> None:
+def run_eval(model: str, output_dir: str, batch_size: int, dataset_name: str, json_mode: bool) -> None:
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
     model_predictor = MODEL_CHOICES[model]()
-    dataset = OpenMathDataset(json_mode=json_mode)
+
+    if dataset_name == 'open_math':
+        dataset = OpenMathDataset(json_mode=json_mode)
+    elif dataset_name == 'kleister_nda':
+        dataset = OpenMathDataset(json_mode=json_mode)
+    elif dataset_name == 'multi_hop_qa':
+        dataset = OpenMathDataset(json_mode=json_mode)
+    else:
+        raise ValueError(f'No such dataset: {dataset_name}')
 
     predictions = []
     if json_mode:
@@ -50,6 +58,9 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
                 max_string_token_length=MAX_NEW_TOKENS,
             )
             answer = jsonformer()
+
+            print(answer, asdict(sample))
+            print('\n')
 
             predictions.append(
                 {
@@ -81,6 +92,9 @@ def run_eval(model: str, output_dir: str, batch_size: int, json_mode: bool) -> N
                         "answer": pred,
                     }
                 )
+
+            print(pred, asdict(sample))
+            print('\n')
 
             json.dump(
                 predictions,
