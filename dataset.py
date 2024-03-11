@@ -73,8 +73,7 @@ class OpenMathDataset(Dataset):
 
     def __len__(self):
         # Limit it to 2k samples on purpose
-        # return 2000
-        return 5
+        return 2000
 
 
 class KleisterNdaDataset(Dataset):
@@ -177,8 +176,7 @@ class KleisterNdaDataset(Dataset):
         return sample
 
     def __len__(self) -> int:
-        # return len(self.ground_truth)
-        return 5
+        return len(self.ground_truth)
 
 
 class MultiHopQADataset(Dataset):
@@ -223,8 +221,7 @@ class MultiHopQADataset(Dataset):
 
     def __len__(self):
         # Limit it to 2k samples on purpose
-        # return 500
-        return 5
+        return 500
 
 
 if __name__ == "__main__":

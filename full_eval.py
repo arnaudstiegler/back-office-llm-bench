@@ -15,7 +15,7 @@ output_dir = "/home/ubuntu/predictions"
 run_eval(
     model="mistral-instruct",
     output_dir=output_dir,
-    batch_size=5,
+    batch_size=1,
     dataset_name="open_math",
     json_mode=False,
 )
@@ -29,7 +29,7 @@ run_eval(
 run_eval(
     model="mistral-instruct",
     output_dir=output_dir,
-    batch_size=5,
+    batch_size=1,
     dataset_name="kleister_nda",
     json_mode=False,
 )
@@ -43,7 +43,7 @@ run_eval(
 run_eval(
     model="mistral-instruct",
     output_dir=output_dir,
-    batch_size=5,
+    batch_size=1,
     dataset_name="multi_hop_qa",
     json_mode=False,
 )

@@ -61,9 +61,6 @@ def run_eval(
             )
             answer = jsonformer()
 
-            print(answer, asdict(sample))
-            print("\n")
-
             predictions.append(
                 {
                     "sample": asdict(sample),
@@ -73,7 +70,7 @@ def run_eval(
             json.dump(
                 predictions,
                 open(
-                    os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"
+                    os.path.join(output_dir, f"{model}_{dataset_name}_json-mode={json_mode}.json"), "w"
                 ),
             )
 
@@ -95,13 +92,10 @@ def run_eval(
                     }
                 )
 
-            print(pred, asdict(sample))
-            print("\n")
-
             json.dump(
                 predictions,
                 open(
-                    os.path.join(output_dir, f"{model}_json-mode={json_mode}.json"), "w"
+                    os.path.join(output_dir, f"{model}_{dataset_name}_json-mode={json_mode}.json"), "w"
                 ),
             )
 
