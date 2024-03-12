@@ -42,7 +42,7 @@ def train():
     tokenizer = AutoTokenizer.from_pretrained(
         "mistralai/Mistral-7B-Instruct-v0.2",
         truncation=True,
-        model_max_length=512,
+        model_max_length=256,
         padding="max_length",
     )
     # the tokenizer doesn't natively have a pad token
@@ -54,7 +54,7 @@ def train():
         question = tokenizer(
             sample["question"] + sample["response"],
             truncation=True,
-            max_length=512,
+            max_length=256,
             padding="max_length",
             return_tensors="pt",
         )
