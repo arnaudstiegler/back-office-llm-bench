@@ -63,7 +63,6 @@ def train():
             truncation=True,
             max_length=512,
             padding="max_length",
-            return_tensors="pt",
         )
         # Note: supervising the question as well, might be changed later
         return {
