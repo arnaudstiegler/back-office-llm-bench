@@ -13,6 +13,8 @@ import os
 from datetime import datetime
 from typing import Dict, Any
 
+import torch._dynamo
+torch._dynamo.config.suppress_errors = True
 
 MAX_STEPS = 1000
 

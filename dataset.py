@@ -201,9 +201,8 @@ class MultiHopQADataset(Dataset):
         For instance, if the question is: what is the capital of the country with the largest GDP in the world?
         The output would be:
         {"answer": "USA"}
-        Typically, the answer should only be a few words and not a sentence.
-        Also, do not put " or ' in the value of the JSON because that prevents me from parsing the json within the string.
-        
+        Typically, the answer should only be a few words and not a sentence. Make sure that you return a parsable json
+        with correct syntax.
         """
         if not self.json_mode:
             prompt += " Think step by step. First write the reasoning to get to the answer, then write the Json object containing only the answer"
