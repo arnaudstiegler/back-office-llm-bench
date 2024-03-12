@@ -5,6 +5,7 @@ from transformers import (
     DataCollatorForLanguageModeling,
     Trainer,
     TrainingArguments,
+    BitsAndBytesConfig
 )
 from datasets import load_dataset
 from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model
@@ -12,7 +13,7 @@ import wandb
 import os
 from datetime import datetime
 from typing import Dict, Any
-from accelerate import FullyShardedDataParallelPlugin, Accelerator
+from accelerate import FullyShardedDataParallelPlugin, Accelerator,
 from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig
 
 fsdp_plugin = FullyShardedDataParallelPlugin(
@@ -32,17 +33,23 @@ def train():
 
     train = load_dataset("Open-Orca/OpenOrca", split="train[:95%]")
     val = load_dataset("Open-Orca/OpenOrca", split="train[99%:]")
-
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
     model = AutoModelForCausalLM.from_pretrained(
         "mistralai/Mistral-7B-Instruct-v0.2",
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         attn_implementation="flash_attention_2" if torch.cuda.is_available() else None,
+        quantization_config=bnb_config
     ).to(device)
     model = torch.compile(model)
     tokenizer = AutoTokenizer.from_pretrained(
         "mistralai/Mistral-7B-Instruct-v0.2",
         truncation=True,
-        model_max_length=256,
+        model_max_length=512,
         padding="max_length",
     )
     # the tokenizer doesn't natively have a pad token
@@ -54,7 +61,7 @@ def train():
         question = tokenizer(
             sample["question"] + sample["response"],
             truncation=True,
-            max_length=256,
+            max_length=512,
             padding="max_length",
             return_tensors="pt",
         )
