@@ -44,7 +44,7 @@ def train():
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         attn_implementation="flash_attention_2" if torch.cuda.is_available() else None,
         quantization_config=bnb_config
-    ).to(device)
+    )
     model = torch.compile(model)
     tokenizer = AutoTokenizer.from_pretrained(
         "mistralai/Mistral-7B-Instruct-v0.2",
