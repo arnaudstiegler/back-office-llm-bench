@@ -13,7 +13,7 @@ import wandb
 import os
 from datetime import datetime
 from typing import Dict, Any
-from accelerate import FullyShardedDataParallelPlugin, Accelerator,
+from accelerate import FullyShardedDataParallelPlugin, Accelerator
 from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig
 
 fsdp_plugin = FullyShardedDataParallelPlugin(
