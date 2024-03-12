@@ -12,7 +12,15 @@ import wandb
 import os
 from datetime import datetime
 from typing import Dict, Any
+from accelerate import FullyShardedDataParallelPlugin, Accelerator
+from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig
 
+fsdp_plugin = FullyShardedDataParallelPlugin(
+    state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
+    optim_state_dict_config=FullOptimStateDictConfig(offload_to_cpu=True, rank0_only=False),
+)
+
+accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
 import torch._dynamo
 torch._dynamo.config.suppress_errors = True
 
@@ -59,7 +67,7 @@ def train():
 
     preprocessed_val_map = val.map(prepare_sample)
 
-    # model = prepare_model_for_kbit_training(model)
+    model = prepare_model_for_kbit_training(model)
 
     config = LoraConfig(
         r=8,
@@ -78,7 +86,7 @@ def train():
     # print_trainable_parameters(model)
     #
     # # Apply the accelerator. You can comment this out to remove the accelerator.
-    # model = accelerator.prepare_model(model)
+    model = accelerator.prepare_model(model)
 
     # wandb.login()
     #
