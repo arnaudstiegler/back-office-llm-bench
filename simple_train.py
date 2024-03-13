@@ -68,7 +68,7 @@ def train():
         return {
             "input_ids": question["input_ids"],
             "attention_mask": question["attention_mask"],
-            "labels": question["input_ids"].clone(),
+            "labels": question["input_ids"].copy(),
         }
 
     preprocessed_val_map = val.map(prepare_sample)
