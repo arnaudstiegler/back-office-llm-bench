@@ -1,6 +1,6 @@
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
-from dataset import MultiHopQADataset, KleisterNdaDataset
+from dataset import MultiHopQADataset, KleisterNdaDataset, OpenMathDataset
 from utils import find_and_parse_json
 import json
 from tqdm import tqdm
@@ -27,7 +27,7 @@ predictions = []
 for i in tqdm(range(len(dataset))):
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4-0125-preview",
             messages=[
                 {"role": "system", "content": SYS_PROMPT},
                 {"role": "user", "content": dataset[i].prompt},
